@@ -1,6 +1,7 @@
 import AgoraRTC from "agora-rtc-sdk-ng";
 import { sendEvent } from "./mixPanel";
-let host = true;
+import * as uuid from 'uuid'
+let host = false;
 console.log('APPID', import.meta.env.VITE_APP_APPID);
 let options = {
   // Pass your App ID here.
@@ -11,7 +12,7 @@ let options = {
   token:
   import.meta.env.VITE_APP_TOKEN || "007eJxTYLDw0FNZac398nOSSvQL09RQBZtrX7iD5giefSldNeP3hecKDKZGZkmmKZYWluYGqSYGlsZJlqbGSSmWpqmmJonmxuaJTwJ2pTQEMjKw7uNlYIRCEJ+JIS+PgQEAo5kdSQ==",
   // Set the user ID.
-  uid: 'Audience',
+  uid: uuid.v4(),
 };
 let channelParameters = {
   // A variable to hold a local audio track.
@@ -28,7 +29,7 @@ let channelParameters = {
 async function startBasicCall() {
   // Create an instance of the Agora Engine
 
-  const agoraEngine = AgoraRTC.createClient({ mode: "rtc", codec: "vp9" });
+  const agoraEngine = AgoraRTC.createClient({ mode: "rtc", codec: "vp9" , role: "audience"});
   // Dynamically create a container in the form of a DIV element to play the remote video track.
   const remotePlayerContainer = document.createElement("div");
   // Dynamically create a container in the form of a DIV element to play the local video track.
@@ -36,7 +37,7 @@ async function startBasicCall() {
   // Specify the ID of the DIV container. You can use the uid of the local user.
   localPlayerContainer.id = options.uid;
   // Set the textContent property of the local video container to the local user id.
-  localPlayerContainer.textContent = "Local user " + host ? 'Host': 'Audience';
+  localPlayerContainer.textContent = "Local user " + (host ? 'Host': 'Audience');
   // Set the local video container size.
   localPlayerContainer.style.width = "640px";
   localPlayerContainer.style.height = "480px";
