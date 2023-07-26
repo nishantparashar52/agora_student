@@ -34,8 +34,8 @@
 }
 
 .player {
-  width: 480px;
-  height: 320px;
+  width: 80vw;
+  height: 80vh;
 }
 
 .player-name {

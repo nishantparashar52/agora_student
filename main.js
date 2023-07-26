@@ -203,30 +203,32 @@ $(".mic-list").delegate("a", "click", function (e) {
  * Join a channel, then create local video and audio tracks and publish them to the channel.
  */
 async function join() {
+  
   // Add an event listener to play remote tracks when remote user publishes.
   client.on("user-published", handleUserPublished);
   client.on("user-unpublished", handleUserUnpublished);
   // Join the channel.
   options.uid = await client.join(options.appId, options.channel, options.token || null, options.uid || null);
-  if (!localTracks.audioTrack) {
-    localTracks.audioTrack = await AgoraRTC.createMicrophoneAudioTrack({
-      encoderConfig: "music_standard"
-    });
-  }
-  if (!localTracks.videoTrack) {
-    localTracks.videoTrack = await AgoraRTC.createCameraVideoTrack({
-      encoderConfig: curVideoProfile.value
-    });
-  }
+  
+  // if (!localTracks.audioTrack) {
+  //   localTracks.audioTrack = await AgoraRTC.createMicrophoneAudioTrack({
+  //     encoderConfig: "music_standard"
+  //   });
+  // }
+  // if (!localTracks.videoTrack) {
+  //   localTracks.videoTrack = await AgoraRTC.createCameraVideoTrack({
+  //     encoderConfig: curVideoProfile.value
+  //   });
+  // }
 
-  // Play the local video track to the local browser and update the UI with the user ID.
-  localTracks.videoTrack.play("local-player");
-  $("#local-player-name").text(`localVideo(${options.uid})`);
-  $("#joined-setup").css("display", "flex");
+  // // Play the local video track to the local browser and update the UI with the user ID.
+  // localTracks.videoTrack.play("local-player");
+  // $("#local-player-name").text(`localVideo(${options.uid})`);
+  // $("#joined-setup").css("display", "flex");
 
-  // Publish the local video and audio tracks to the channel.
-  await client.publish(Object.values(localTracks));
-  console.log("publish success");
+  // // Publish the local video and audio tracks to the channel.
+  // await client.publish(Object.values(localTracks));
+  // console.log("publish success");
   sendDataToMixPanel()
 }
 
@@ -268,17 +270,19 @@ async function subscribe(user, mediaType) {
   await client.subscribe(user, mediaType);
   console.log("subscribe success");
   if (mediaType === "video") {
-    const player = $(`
-      <div id="player-wrapper-${uid}">
-        <p class="player-name">remoteUser(${uid})</p>
-        <div id="player-${uid}" class="player"></div>
-      </div>
-    `);
-    $("#remote-playerlist").append(player);
-    user.videoTrack.play(`player-${uid}`);
-  }
-  if (mediaType === "audio") {
-    user.audioTrack.play();
+    if(user.uid==1){
+      const player = $(`
+        <div id="player-wrapper-${uid}">
+          <p class="player-name">remoteUser(${uid})</p>
+          <div id="player-${uid}" class="player"></div>
+        </div>
+      `);
+      $("#remote-playerlist").append(player);
+      user.videoTrack.play(`player-${uid}`);
+      if (mediaType === "audio") {
+        user.audioTrack.play();
+      }
+    }
   }
 }
 
@@ -290,6 +294,7 @@ async function subscribe(user, mediaType) {
  */
 function handleUserPublished(user, mediaType) {
   const id = user.uid;
+  console.log("bb",user)
   remoteUsers[id] = user;
   subscribe(user, mediaType);
 }
