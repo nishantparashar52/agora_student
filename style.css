@@ -84,3 +84,28 @@
     padding-right: 4.5rem
   }
 }
+.toggle-button {
+  width: 50px;
+  height: 25px;
+  background-color: #f00; /* Default color: Red */
+  border-radius: 12.5px;
+  position: relative;
+  cursor: pointer;
+  display: inline-block;
+}
+.toggle-button .slider {
+  width: 20px;
+  height: 20px;
+  background-color: #fff;
+  border-radius: 50%;
+  position: absolute;
+  top: 2.5px;
+  left: 2.5px;
+  transition: transform 0.3s;
+}
+.toggle-on {
+  background-color: #2196F3; /* Enabled color: Blue */
+}
+.toggle-on .slider {
+  transform: translateX(25px);
+}

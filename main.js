@@ -10,6 +10,10 @@ var localTracks = {
 
 var remoteUsers = {};
 
+let isToggled = false;
+let channelJoined = false
+let mixPanelTimer = null
+
 /*
  * On initiation. `client` is not attached to any project or channel for any specific user.
  */
@@ -183,6 +187,27 @@ $("#join-form").submit(async function (e) {
   }
 });
 
+$(document).ready(function() {
+  // Add a click event handler to the toggle button
+  $('.toggle-button').click(function() {
+    // Toggle the class 'toggle-on' on the toggle button
+    isToggled = !isToggled;
+    $('.toggle-button').toggleClass('toggle-on', isToggled);
+    let text = isToggled? "Enable Logging": "Disable Logging"
+    $('#loggin-text').text(text)
+    if(channelJoined){
+      sendDataToMixPanel()
+    }
+
+    if(!isToggled){
+      if(mixPanelTimer){
+        clearInterval(mixPanelTimer)
+      }
+    }
+
+  });
+});
+
 /*
  * Called when a user clicks Leave in order to exit a channel.
  */
@@ -207,6 +232,7 @@ async function join() {
   // Add an event listener to play remote tracks when remote user publishes.
   client.on("user-published", handleUserPublished);
   client.on("user-unpublished", handleUserUnpublished);
+  channelJoined = true
   // Join the channel.
   options.uid = await client.join(options.appId, options.channel, options.token || null, options.uid || null);
   
@@ -229,7 +255,9 @@ async function join() {
   // // Publish the local video and audio tracks to the channel.
   // await client.publish(Object.values(localTracks));
   // console.log("publish success");
-  sendDataToMixPanel()
+  if(isToggled){
+    sendDataToMixPanel()
+  }
 }
 
 /*
@@ -313,7 +341,10 @@ function handleUserUnpublished(user, mediaType) {
 }
 
 function sendDataToMixPanel (){
-  setInterval(() => {
+  if(mixPanelTimer){
+    clearInterval(mixPanelTimer)
+  }
+  mixPanelTimer=setInterval(() => {
 
     let localAudioStats = client.getLocalAudioStats();
     // (localAudioStats) => {
