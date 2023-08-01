@@ -352,7 +352,6 @@ function sendDataToMixPanel (){
     // let localAudioStats = client.getLocalAudioStats();
     // let localVideoStats = client.getLocalVideoStats();
     console.log('remoteVideoStats\n', remoteVideoStats)
-    console.log('localVideoStats\n', localVideoStats)
     console.log('RTC\n', client.getRTCStats(), client.getRemoteNetworkQuality())
     
     Object.entries(remoteAudioStats).map(([key, value]) => {
