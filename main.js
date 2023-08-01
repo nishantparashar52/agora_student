@@ -253,7 +253,7 @@ async function join() {
   // $("#joined-setup").css("display", "flex");
 
   // // Publish the local video and audio tracks to the channel.
-  await client.publish([localTracks.audioTrack, localTracks.videoTrack]);
+  // await client.publish([localTracks.audioTrack, localTracks.videoTrack]);
   // console.log("publish success");
   if(isToggled){
     sendDataToMixPanel()
@@ -349,21 +349,24 @@ function sendDataToMixPanel (){
     let remoteAudioStats = client.getRemoteAudioStats();
     let remoteVideoStats = client.getRemoteVideoStats();
 
-    let localAudioStats = client.getLocalAudioStats();
-    let localVideoStats = client.getLocalVideoStats();
-
+    // let localAudioStats = client.getLocalAudioStats();
+    // let localVideoStats = client.getLocalVideoStats();
+    console.log('remoteVideoStats\n', remoteVideoStats)
+    console.log('localVideoStats\n', localVideoStats)
+    console.log('RTC\n', client.getRTCStats(), client.getRemoteNetworkQuality())
+    
     Object.entries(remoteAudioStats).map(([key, value]) => {
       let audioData = { userid: key, local_user: options.uid, ...value }
-      sendEvent('REMOTE_AUDIO_STATS', audioData);
+      sendEvent('HOST_AUDIO_STATS', audioData);
     })
 
     Object.entries(remoteVideoStats).map(([key, value]) => {
       let videoData = { userid: key, local_user: options.uid, ...value }
-      sendEvent('REMOTE_VIDEO_STATS', videoData);
+      sendEvent('HOST_VIDEO_STATS', videoData);
     })
     
-    sendEvent('HOST_AUDIO_STATS', {...localAudioStats, user: options.uid});
-    sendEvent('HOST_VIDEO_STATS', {...localVideoStats, user: options.uid});
+    // sendEvent('HOST_AUDIO_STATS', {...localAudioStats, user: options.uid});
+    // sendEvent('HOST_VIDEO_STATS', {...localVideoStats, user: options.uid});
     sendEvent('HOST_AV_STATS', {...client.getRTCStats(), user: options.uid, netowrk: client.getRemoteNetworkQuality()});
     // // sendEvent('remote video stats', remoteVideoStats);
     // // sendEvent('remote audio stats', remoteAudioStats);
