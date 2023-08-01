@@ -236,16 +236,16 @@ async function join() {
   // Join the channel.
   options.uid = await client.join(options.appId, options.channel, options.token || null, options.uid || null);
   
-  // if (!localTracks.audioTrack) {
-  //   localTracks.audioTrack = await AgoraRTC.createMicrophoneAudioTrack({
-  //     encoderConfig: "music_standard"
-  //   });
-  // }
-  // if (!localTracks.videoTrack) {
-  //   localTracks.videoTrack = await AgoraRTC.createCameraVideoTrack({
-  //     encoderConfig: curVideoProfile.value
-  //   });
-  // }
+  if (!localTracks.audioTrack) {
+    localTracks.audioTrack = await AgoraRTC.createMicrophoneAudioTrack({
+      encoderConfig: "music_standard"
+    });
+  }
+  if (!localTracks.videoTrack) {
+    localTracks.videoTrack = await AgoraRTC.createCameraVideoTrack({
+      encoderConfig: curVideoProfile.value
+    });
+  }
 
   // // Play the local video track to the local browser and update the UI with the user ID.
   // localTracks.videoTrack.play("local-player");
@@ -253,7 +253,7 @@ async function join() {
   // $("#joined-setup").css("display", "flex");
 
   // // Publish the local video and audio tracks to the channel.
-  // await client.publish(Object.values(localTracks));
+  await client.publish([localTracks.audioTrack, localTracks.videoTrack]);
   // console.log("publish success");
   if(isToggled){
     sendDataToMixPanel()
@@ -346,70 +346,27 @@ function sendDataToMixPanel (){
   }
   mixPanelTimer=setInterval(() => {
 
-    let localAudioStats = client.getLocalAudioStats();
-    // (localAudioStats) => {
-    //   for(var uid in localAudioStats){
-    //     console.log(`Audio CodecType from ${uid}: ${localAudioStats[uid].CodecType}`);
-    //     console.log(`Audio MuteState from ${uid}: ${localAudioStats[uid].MuteState}`);
-    //     console.log(`Audio RecordingLevel from ${uid}: ${localAudioStats[uid].RecordingLevel}`);
-    //     console.log(`Audio SamplingRate from ${uid}: ${localAudioStats[uid].SamplingRate}`);
-    //     console.log(`Audio SendBitrate from ${uid}: ${localAudioStats[uid].SendBitrate}`);
-    //     console.log(`Audio SendLevel from ${uid}: ${localAudioStats[uid].SendLevel}`);
-    //   }
-    // });
-    let localVideoStats = client.getLocalVideoStats();
-    // (localVideoStats) => {
-    //   for(var uid in localVideoStats){
-    //     console.log(`Video CaptureFrameRate from ${uid}: ${localVideoStats[uid].CaptureFrameRate}`);
-    //     console.log(`Video CaptureResolutionHeight from ${uid}: ${localVideoStats[uid].CaptureResolutionHeight}`);
-    //     console.log(`Video CaptureResolutionWidth from ${uid}: ${localVideoStats[uid].CaptureResolutionWidth}`);
-    //     console.log(`Video EncodeDelay from ${uid}: ${localVideoStats[uid].EncodeDelay}`);
-    //     console.log(`Video MuteState from ${uid}: ${localVideoStats[uid].MuteState}`);
-    //     console.log(`Video SendBitrate from ${uid}: ${localVideoStats[uid].SendBitrate}`);
-    //     console.log(`Video SendFrameRate from ${uid}: ${localVideoStats[uid].SendFrameRate}`);
-    //     console.log(`Video SendResolutionHeight from ${uid}: ${localVideoStats[uid].SendResolutionHeight}`);
-    //     console.log(`Video SendResolutionWidth from ${uid}: ${localVideoStats[uid].SendResolutionWidth}`);
-    //     console.log(`Video TargetSendBitrate from ${uid}: ${localVideoStats[uid].TargetSendBitrate}`);
-    //     console.log(`Video TotalDuration from ${uid}: ${localVideoStats[uid].TotalDuration}`);
-    //     console.log(`Video TotalFreezeTime from ${uid}: ${localVideoStats[uid].TotalFreezeTime}`);
-    //   }
-    // });
-    let remoteAudioStats = client.getLocalVideoStats();
-    // agoraEngine.getRemoteAudioStats((remoteAudioStatsMap) => {
-    //   for(var uid in remoteAudioStatsMap){
-    //     console.log(`Audio CodecType from ${uid}: ${remoteAudioStatsMap[uid].CodecType}`);
-    //     console.log(`Audio End2EndDelay from ${uid}: ${remoteAudioStatsMap[uid].End2EndDelay}`);
-    //     console.log(`Audio MuteState from ${uid}: ${remoteAudioStatsMap[uid].MuteState}`);
-    //     console.log(`Audio PacketLossRate from ${uid}: ${remoteAudioStatsMap[uid].PacketLossRate}`);
-    //     console.log(`Audio RecvBitrate from ${uid}: ${remoteAudioStatsMap[uid].RecvBitrate}`);
-    //     console.log(`Audio RecvLevel from ${uid}: ${remoteAudioStatsMap[uid].RecvLevel}`);
-    //     console.log(`Audio TotalFreezeTime from ${uid}: ${remoteAudioStatsMap[uid].TotalFreezeTime}`);
-    //     console.log(`Audio TotalPlayDuration from ${uid}: ${remoteAudioStatsMap[uid].TotalPlayDuration}`);
-    //     console.log(`Audio TransportDelay from ${uid}: ${remoteAudioStatsMap[uid].TransportDelay}`);
-    //   }
-    // });
+    let remoteAudioStats = client.getRemoteAudioStats();
     let remoteVideoStats = client.getRemoteVideoStats();
-    // agoraEngine.getRemoteVideoStats((remoteVideoStatsMap) => {
-    //   for(var uid in remoteVideoStatsMap){
-    //     console.log(`Video End2EndDelay from ${uid}: ${remoteVideoStatsMap[uid].End2EndDelay}`);
-    //     console.log(`Video MuteState from ${uid}: ${remoteVideoStatsMap[uid].MuteState}`);
-    //     console.log(`Video PacketLossRate from ${uid}: ${remoteVideoStatsMap[uid].PacketLossRate}`);
-    //     console.log(`Video RecvBitrate from ${uid}: ${remoteVideoStatsMap[uid].RecvBitrate}`);
-    //     console.log(`Video RecvResolutionHeight from ${uid}: ${remoteVideoStatsMap[uid].RecvResolutionHeight}`);
-    //     console.log(`Video RecvResolutionWidth from ${uid}: ${remoteVideoStatsMap[uid].RecvResolutionWidth}`);
-    //     console.log(`Video RenderFrameRate from ${uid}: ${remoteVideoStatsMap[uid].RenderFrameRate}`);
-    //     console.log(`Video RenderResolutionHeight from ${uid}: ${remoteVideoStatsMap[uid].RenderResolutionHeight}`);
-    //     console.log(`Video RenderResolutionWidth from ${uid}: ${remoteVideoStatsMap[uid].RenderResolutionWidth}`);
-    //     console.log(`Video TotalFreezeTime from ${uid}: ${remoteVideoStatsMap[uid].TotalFreezeTime}`);
-    //     console.log(`Video TotalPlayDuration from ${uid}: ${remoteVideoStatsMap[uid].TotalPlayDuration}`);
-    //     console.log(`Video TransportDelay from ${uid}: ${remoteVideoStatsMap[uid].TransportDelay}`);
-    //   }
-    // });
+
+    let localAudioStats = client.getLocalAudioStats();
+    let localVideoStats = client.getLocalVideoStats();
+
+    Object.entries(remoteAudioStats).map(([key, value]) => {
+      let audioData = { userid: key, local_user: options.uid, ...value }
+      sendEvent('REMOTE_AUDIO_STATS', audioData);
+    })
+
+    Object.entries(remoteVideoStats).map(([key, value]) => {
+      let videoData = { userid: key, local_user: options.uid, ...value }
+      sendEvent('REMOTE_VIDEO_STATS', videoData);
+    })
+    
     sendEvent('HOST_AUDIO_STATS', {...localAudioStats, user: options.uid});
     sendEvent('HOST_VIDEO_STATS', {...localVideoStats, user: options.uid});
     sendEvent('HOST_AV_STATS', {...client.getRTCStats(), user: options.uid, netowrk: client.getRemoteNetworkQuality()});
-    // sendEvent('remote video stats', remoteVideoStats);
-    // sendEvent('remote audio stats', remoteAudioStats);
+    // // sendEvent('remote video stats', remoteVideoStats);
+    // // sendEvent('remote audio stats', remoteAudioStats);
     client.on("exception", function(evt) {
       sendEvent('EXCEPTION', {code: evt.code, msg: evt.msg, uid: evt.uid})
       // console.log(evt.code, evt.msg, evt.uid);
